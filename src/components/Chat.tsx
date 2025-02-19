@@ -2,18 +2,27 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Message from './Message';
 import ChatHeader from './ChatHeader';
-import { WhatsAppMessage, parseWhatsAppText } from './data/messages';
+import { WhatsAppMessage, parseWhatsAppText } from './data/messages.ts';
+
 
 const Chat = () => {
+  console.log("Chat component rendered");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [messages, setMessages] = useState<WhatsAppMessage[]>([]);
 
   useEffect(() => {
-    import('./data/conversation_copy.json').then(data => {
-      const parsedConversation = parseWhatsAppText(JSON.stringify(data));
-      setMessages(parsedConversation.messages);
-    });
-    
+    import('./data/conversation.json')
+      .then(data => {
+        // If your bundler wraps the JSON in a default export, you might need:
+        const conversation = data.default || data;
+        console.log("Imported conversation:", conversation);
+        
+        // Set messages directly from the JSON
+        setMessages(conversation.messages);
+      })
+      .catch(error => {
+        console.error("Error importing JSON:", error);
+      });
   }, []);
 
   const scrollToBottom = () => {

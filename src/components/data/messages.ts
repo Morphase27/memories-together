@@ -13,11 +13,11 @@ export interface WhatsAppConversation {
 }
 
 // Function to parse the WhatsApp text
-export function parseWhatsAppText(text: string): WhatsAppConversation {
-    const lines = text.split('\n').filter(line => line.trim() !== '');
+export function parseWhatsAppText(conversation): WhatsAppConversation {
     const messages: WhatsAppMessage[] = [];
 
-    for (const line of lines) {
+    for (const message of conversation) {
+        const line = JSON.stringify(message)
         // Regular expression to match WhatsApp message format
         const match = line.match(/^(\d{2}\/\d{2}\/\d{4}), (\d{2}:\d{2}) - ([^:]+): (.+)$/);
 
