@@ -13,7 +13,7 @@ messages: WhatsAppMessage[];
 }
 
 // Function to parse the WhatsApp text
-function parseWhatsAppText(text: string): WhatsAppConversation {
+export function parseWhatsAppText(text: string): WhatsAppConversation {
     const lines = text.split('\n').filter(line => line.trim() !== '');
     const messages: WhatsAppMessage[] = [];
 
