@@ -9,6 +9,21 @@ const sampleMessages = [
   { text: "I'm good, thanks! How about you?", timestamp: "10:01 AM", isSent: true },
   { text: "Pretty good! Did you see the new updates?", timestamp: "10:02 AM", isSent: false },
   { text: "Yes, they look amazing!", timestamp: "10:03 AM", isSent: true },
+  { text: "Yes, they look amazing!", timestamp: "10:03 AM", isSent: true },
+  { text: "Yes, they look amazing!", timestamp: "10:03 AM", isSent: true },
+  { text: "Yes, they look amazing!", timestamp: "10:03 AM", isSent: true },
+  { text: "Yes, they look amazing!", timestamp: "10:03 AM", isSent: true },
+  { text: "Yes, they look amazing!", timestamp: "10:03 AM", isSent: true },
+  { text: "Yes, they look amazing!", timestamp: "10:03 AM", isSent: true },
+  { text: "Yes, they look amazing!", timestamp: "10:03 AM", isSent: true },
+  { text: "Yes, they look amazing!", timestamp: "10:03 AM", isSent: true },
+  { text: "Yes, they look amazing!", timestamp: "10:03 AM", isSent: true },
+  { text: "Yes, they look amazing!", timestamp: "10:03 AM", isSent: true },
+  { text: "Yes, they look amazing!", timestamp: "10:03 AM", isSent: true },
+  { text: "Yes, they look amazing!", timestamp: "10:03 AM", isSent: true },
+  { text: "Yes, they look amazing!", timestamp: "10:03 AM", isSent: true },
+  { text: "Yes, they look amazing!", timestamp: "10:03 AM", isSent: true },
+  { text: "Yes, they look amazing!", timestamp: "10:03 AM", isSent: true }
 ];
 
 const Chat = () => {
