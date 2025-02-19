@@ -20,10 +20,11 @@ const Chat = () => {
     import('./data/conversation.json')
       .then(data => {
         const conversation = data.default || data;
-        const reversedMessages = [...conversation.messages].reverse();
-        setAllMessages(reversedMessages);
-        // Load initial batch of most recent messages
-        setMessages(reversedMessages.slice(0, MESSAGES_PER_PAGE));
+        const messages = conversation.messages;
+        setAllMessages(messages);
+        // Load initial batch of most recent messages from the end
+        const startIndex = Math.max(0, messages.length - MESSAGES_PER_PAGE);
+        setMessages(messages.slice(startIndex));
       })
       .catch(error => {
         console.error("Error importing JSON:", error);
@@ -47,12 +48,11 @@ const Chat = () => {
 
     setIsLoading(true);
     const nextPage = page + 1;
-    const start = messages.length;
-    const end = start + MESSAGES_PER_PAGE;
+    const startIndex = Math.max(0, allMessages.length - (MESSAGES_PER_PAGE * nextPage));
     
     // Simulate loading delay
     setTimeout(() => {
-      const newMessages = allMessages.slice(0, end);
+      const newMessages = allMessages.slice(startIndex);
       setMessages(newMessages);
       setPage(nextPage);
       setIsLoading(false);
