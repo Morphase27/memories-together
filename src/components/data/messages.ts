@@ -23,7 +23,7 @@ export function parseWhatsAppText(text: string): WhatsAppConversation {
 
         if (match) {
         const [, date, timestamp, sender, content] = match;
-
+        const isSent = sender.trim() === "Gracou";
         messages.push({
             date,
             timestamp,
