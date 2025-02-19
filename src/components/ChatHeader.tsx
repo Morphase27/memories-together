@@ -4,7 +4,7 @@ import profilePic from './data/profile.jpg'; // Ensure profile.jpg is in the sam
 const ChatHeader = () => {
   return (
     <div className="bg-whatsapp-header px-4 py-2 flex items-center gap-3 border-b border-gray-200">
-      <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-200">
+      <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-200">
         <img
           src={profilePic}
           alt="Profile"
