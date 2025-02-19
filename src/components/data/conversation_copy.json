@@ -1,0 +1,27 @@
+{
+  "messages": [
+    {
+      "date": "07/06/2021",
+      "timestamp": "17:50",
+      "isSent": false,
+      "content": "I finally managed to add you on whatsapp, took me ages"
+    },
+    {
+      "date": "07/06/2021",
+      "timestamp": "17:51",
+      "isSent": true,
+      "content": "Yeah I tried to send a request to u but I didn’t have ur french number"
+    },
+    {
+      "date": "07/06/2021",
+      "timestamp": "17:51",
+      "isSent": false,
+      "content": "0786494166"
+    },
+    {
+      "date": "07/06/2021",
+      "timestamp": "17:51",
+      "isSent": false,
+      "content": "+33 786494166"
+    }  ]
+}

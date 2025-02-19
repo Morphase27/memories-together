@@ -8,7 +8,7 @@ const Chat = () => {
   const [messages, setMessages] = useState<WhatsAppMessage[]>([]);
 
   useEffect(() => {
-    import('./data/conversation.json').then(data => {
+    import('./data/conversation_copy.json').then(data => {
       const parsedConversation = parseWhatsAppText(JSON.stringify(data));
       setMessages(parsedConversation.messages);
     });
