@@ -20,9 +20,10 @@ const Chat = () => {
     import('./data/conversation.json')
       .then(data => {
         const conversation = data.default || data;
-        setAllMessages(conversation.messages);
-        // Load initial batch of messages
-        setMessages(conversation.messages.slice(0, MESSAGES_PER_PAGE));
+        const reversedMessages = [...conversation.messages].reverse();
+        setAllMessages(reversedMessages);
+        // Load initial batch of most recent messages
+        setMessages(reversedMessages.slice(0, MESSAGES_PER_PAGE));
       })
       .catch(error => {
         console.error("Error importing JSON:", error);
