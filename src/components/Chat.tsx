@@ -70,6 +70,38 @@ const Chat = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
+  const renderMessages = () => {
+    let currentDate = '';
+    return messages.map((message, index) => {
+      const messageDate = message.date;
+      let dateHeader = null;
+
+      // Show date header if it's a new date
+      if (messageDate !== currentDate) {
+        currentDate = messageDate;
+        dateHeader = (
+          <div key={`date-${messageDate}`} className="flex justify-center my-4">
+            <span className="bg-gray-200 text-gray-600 px-3 py-1 rounded-full text-sm">
+              {messageDate}
+            </span>
+          </div>
+        );
+      }
+
+      return (
+        <React.Fragment key={`message-group-${index}`}>
+          {dateHeader}
+          <Message
+            key={index}
+            text={message.content}
+            timestamp={message.timestamp}
+            isSent={message.isSent}
+          />
+        </React.Fragment>
+      );
+    });
+  };
+
   return (
     <div className="max-w-2xl mx-auto h-screen flex flex-col bg-whatsapp-background">
       <ChatHeader />
@@ -83,14 +115,7 @@ const Chat = () => {
             Loading more messages...
           </div>
         )}
-        {messages.map((message, index) => (
-          <Message
-            key={index}
-            text={message.content}
-            timestamp={message.timestamp}
-            isSent={message.isSent}
-          />
-        ))}
+        {renderMessages()}
         <div ref={messagesEndRef} />
       </div>
     </div>
