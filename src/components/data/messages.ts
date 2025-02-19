@@ -9,7 +9,7 @@ export interface WhatsAppMessage {
   
 // Interface for the conversation
 export interface WhatsAppConversation {
-messages: WhatsAppMessage[];
+    messages: WhatsAppMessage[];
 }
 
 // Function to parse the WhatsApp text
