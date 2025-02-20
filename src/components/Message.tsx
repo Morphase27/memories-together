@@ -8,9 +8,10 @@ interface MessageProps {
   timestamp: string;
   isSent: boolean;
   date: string;
+  selectedTab: string;
 }
 
-const Message: React.FC<MessageProps> = ({ text, timestamp, isSent, date }) => {
+const Message: React.FC<MessageProps> = ({ text, timestamp, isSent, date, selectedTab }) => {
   return (
     <div
       className={cn(
@@ -26,7 +27,10 @@ const Message: React.FC<MessageProps> = ({ text, timestamp, isSent, date }) => {
       >
         <div className="flex justify-between items-start gap-2">
           <p className="text-whatsapp-text text-sm break-words">{text}</p>
-          <BookmarkButton message={{ content: text, timestamp, date, isSent }} />
+          <BookmarkButton 
+            message={{ content: text, timestamp, date, isSent }} 
+            selectedTab={selectedTab}
+          />
         </div>
         <span className="text-[11px] text-whatsapp-timestamp block text-right mt-1">
           {timestamp}

@@ -11,9 +11,10 @@ interface BookmarkButtonProps {
     date: string;
     isSent: boolean;
   };
+  selectedTab: string;
 }
 
-const BookmarkButton = ({ message }: BookmarkButtonProps) => {
+const BookmarkButton = ({ message, selectedTab }: BookmarkButtonProps) => {
   const handleBookmark = async () => {
     try {
       const { data, error } = await supabase
@@ -22,8 +23,8 @@ const BookmarkButton = ({ message }: BookmarkButtonProps) => {
           {
             content: message.content,
             sent_at: `${message.date} ${message.timestamp}`,
-            user: message.isSent ? 'Big Trolley' : 'Small Trolley',
-            sender_name: message.isSent ? 'Big Trolley' : 'Small Trolley'
+            user: selectedTab, // Use the selected tab as the user
+            sender_name: message.isSent ? 'Small Trolley' : 'Big Trolley' // Reverse the logic as per requirement
           }
         ]);
 

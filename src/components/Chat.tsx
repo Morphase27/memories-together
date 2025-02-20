@@ -15,6 +15,7 @@ const Chat = () => {
   const [allMessages, setAllMessages] = useState<WhatsAppMessage[]>([]);
   const [page, setPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedTab, setSelectedTab] = useState('Big Trolley');
 
   useEffect(() => {
     import('./data/conversation.json')
@@ -145,6 +146,7 @@ const Chat = () => {
             timestamp={message.timestamp}
             date={message.date}
             isSent={message.isSent}
+            selectedTab={selectedTab}
           />
         </React.Fragment>
       );
@@ -171,7 +173,10 @@ const Chat = () => {
       </div>
       <div className="w-64 p-4 border-l border-gray-200 space-y-4">
         <DateSelector onDateSelect={jumpToDate} />
-        <BookmarkSelector onBookmarkSelect={jumpToTimestamp} />
+        <BookmarkSelector 
+          onBookmarkSelect={jumpToTimestamp}
+          onTabChange={setSelectedTab}
+        />
       </div>
     </div>
   );

@@ -16,9 +16,10 @@ interface Bookmark {
 
 interface BookmarkSelectorProps {
   onBookmarkSelect: (date: string) => void;
+  onTabChange: (tab: string) => void;
 }
 
-const BookmarkSelector = ({ onBookmarkSelect }: BookmarkSelectorProps) => {
+const BookmarkSelector = ({ onBookmarkSelect, onTabChange }: BookmarkSelectorProps) => {
   const [bookmarks, setBookmarks] = useState<{ [key: string]: Bookmark[] }>({
     'Big Trolley': [],
     'Small Trolley': []
@@ -79,7 +80,7 @@ const BookmarkSelector = ({ onBookmarkSelect }: BookmarkSelectorProps) => {
 
   return (
     <div className="bg-white rounded-lg shadow-lg p-4">
-      <Tabs defaultValue="Big Trolley">
+      <Tabs defaultValue="Big Trolley" onValueChange={onTabChange}>
         <TabsList className="w-full mb-4">
           <TabsTrigger value="Big Trolley" className="flex-1">Big Trolley</TabsTrigger>
           <TabsTrigger value="Small Trolley" className="flex-1">Small Trolley</TabsTrigger>
@@ -99,6 +100,9 @@ const BookmarkSelector = ({ onBookmarkSelect }: BookmarkSelectorProps) => {
                       {formatDate(bookmark.sent_at)}
                     </div>
                     <div className="text-sm line-clamp-2">{bookmark.content}</div>
+                    <div className="text-xs text-gray-500 mt-1">
+                      Sent by: {bookmark.sender_name}
+                    </div>
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
