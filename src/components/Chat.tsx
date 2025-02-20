@@ -123,10 +123,7 @@ const Chat = () => {
   };
 
   const handleBookmarkAdded = () => {
-    const timeoutId = setTimeout(() => {
-      setSelectedTab(prev => prev);
-    }, 0);
-    return () => clearTimeout(timeoutId);
+    // We don't need this anymore since we're using real-time subscriptions
   };
 
   const renderMessages = () => {

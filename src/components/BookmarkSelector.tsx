@@ -52,8 +52,28 @@ const BookmarkSelector = ({ onBookmarkSelect, onTabChange }: BookmarkSelectorPro
     }
   };
 
+  // Set up real-time subscription for bookmarks
   useEffect(() => {
     fetchBookmarks();
+
+    const channel = supabase
+      .channel('bookmarks_changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'Bookmarks'
+        },
+        () => {
+          fetchBookmarks();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   const handleDelete = async (id: number) => {
