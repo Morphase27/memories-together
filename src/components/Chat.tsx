@@ -2,6 +2,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Message from './Message';
 import ChatHeader from './ChatHeader';
+import DateSelector from './DateSelector';
 import { WhatsAppMessage } from './data/messages';
 
 const MESSAGES_PER_PAGE = 20; // Number of messages to load at once
@@ -31,30 +32,62 @@ const Chat = () => {
       });
   }, []);
 
+  const jumpToDate = (year: string, month: string) => {
+    const targetDate = `${month}/${year}`;
+    const targetIndex = allMessages.findIndex(message => message.date.includes(targetDate));
+    
+    if (targetIndex !== -1) {
+      // Load messages around the target date
+      const startIndex = Math.max(0, targetIndex - Math.floor(MESSAGES_PER_PAGE / 2));
+      const endIndex = Math.min(allMessages.length, startIndex + MESSAGES_PER_PAGE);
+      setMessages(allMessages.slice(startIndex, endIndex));
+      setPage(Math.ceil(endIndex / MESSAGES_PER_PAGE));
+    }
+  };
+
   // Handle scroll event
   const handleScroll = () => {
     if (!scrollContainerRef.current || isLoading) return;
 
-    const { scrollTop } = scrollContainerRef.current;
+    const { scrollTop, scrollHeight, clientHeight } = scrollContainerRef.current;
     
     // Load more when user scrolls near the top
     if (scrollTop < 100) {
-      loadMoreMessages();
+      loadMoreOlderMessages();
+    }
+    
+    // Load more when user scrolls near the bottom
+    if (scrollHeight - (scrollTop + clientHeight) < 100) {
+      loadMoreNewerMessages();
     }
   };
 
-  const loadMoreMessages = () => {
-    if (isLoading || messages.length >= allMessages.length) return;
+  const loadMoreOlderMessages = () => {
+    if (isLoading || messages.length === 0) return;
+
+    const firstMessageIndex = allMessages.indexOf(messages[0]);
+    if (firstMessageIndex <= 0) return;
 
     setIsLoading(true);
-    const nextPage = page + 1;
-    const startIndex = Math.max(0, allMessages.length - (MESSAGES_PER_PAGE * nextPage));
-    
-    // Simulate loading delay
     setTimeout(() => {
-      const newMessages = allMessages.slice(startIndex);
+      const startIndex = Math.max(0, firstMessageIndex - MESSAGES_PER_PAGE);
+      const newMessages = allMessages.slice(startIndex, firstMessageIndex + messages.length);
       setMessages(newMessages);
-      setPage(nextPage);
+      setIsLoading(false);
+    }, 500);
+  };
+
+  const loadMoreNewerMessages = () => {
+    if (isLoading || messages.length === 0) return;
+
+    const lastMessageIndex = allMessages.indexOf(messages[messages.length - 1]);
+    if (lastMessageIndex >= allMessages.length - 1) return;
+
+    setIsLoading(true);
+    setTimeout(() => {
+      const endIndex = Math.min(allMessages.length, lastMessageIndex + MESSAGES_PER_PAGE + 1);
+      const newMessages = allMessages.slice(messages[0] ? allMessages.indexOf(messages[0]) : 0, endIndex);
+      setMessages(newMessages);
       setIsLoading(false);
     }, 500);
   };
@@ -103,20 +136,25 @@ const Chat = () => {
   };
 
   return (
-    <div className="max-w-2xl mx-auto h-screen flex flex-col bg-whatsapp-background">
-      <ChatHeader />
-      <div 
-        ref={scrollContainerRef}
-        className="flex-1 overflow-y-auto p-4"
-        onScroll={handleScroll}
-      >
-        {isLoading && (
-          <div className="text-center py-2 text-gray-500">
-            Loading more messages...
-          </div>
-        )}
-        {renderMessages()}
-        <div ref={messagesEndRef} />
+    <div className="max-w-4xl mx-auto h-screen flex bg-whatsapp-background">
+      <div className="flex-1 flex flex-col">
+        <ChatHeader />
+        <div 
+          ref={scrollContainerRef}
+          className="flex-1 overflow-y-auto p-4"
+          onScroll={handleScroll}
+        >
+          {isLoading && (
+            <div className="text-center py-2 text-gray-500">
+              Loading more messages...
+            </div>
+          )}
+          {renderMessages()}
+          <div ref={messagesEndRef} />
+        </div>
+      </div>
+      <div className="w-64 p-4 border-l border-gray-200">
+        <DateSelector onDateSelect={jumpToDate} />
       </div>
     </div>
   );
