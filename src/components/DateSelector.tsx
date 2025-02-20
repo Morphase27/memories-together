@@ -8,7 +8,7 @@ interface DateSelectorProps {
   onDateSelect: (year: string, month: string) => void;
 }
 
-const YEARS = ['2021'];
+const YEARS = ['2021', '2022', '2023', '2024', '2025'];
 const MONTHS = [
   { value: '01', label: 'January' },
   { value: '02', label: 'February' },
