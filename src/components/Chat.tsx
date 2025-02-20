@@ -16,6 +16,7 @@ const Chat = () => {
   const [page, setPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedTab, setSelectedTab] = useState('Big Trolley');
+  const [highlightedMessageTime, setHighlightedMessageTime] = useState<string | null>(null);
 
   useEffect(() => {
     import('./data/conversation.json')
@@ -55,6 +56,7 @@ const Chat = () => {
       const endIndex = Math.min(allMessages.length, startIndex + MESSAGES_PER_PAGE);
       setMessages(allMessages.slice(startIndex, endIndex));
       setPage(Math.ceil(endIndex / MESSAGES_PER_PAGE));
+      setHighlightedMessageTime(`${allMessages[targetIndex].date} ${allMessages[targetIndex].timestamp}`);
       
       setTimeout(() => {
         const messageElements = document.querySelectorAll('.animate-message-appear');
@@ -120,6 +122,13 @@ const Chat = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
+  const handleBookmarkAdded = () => {
+    const timeoutId = setTimeout(() => {
+      setSelectedTab(prev => prev);
+    }, 0);
+    return () => clearTimeout(timeoutId);
+  };
+
   const renderMessages = () => {
     let currentDate = '';
     return messages.map((message, index) => {
@@ -137,6 +146,8 @@ const Chat = () => {
         );
       }
 
+      const isHighlighted = highlightedMessageTime === `${message.date} ${message.timestamp}`;
+
       return (
         <React.Fragment key={`message-group-${index}`}>
           {dateHeader}
@@ -147,6 +158,8 @@ const Chat = () => {
             date={message.date}
             isSent={message.isSent}
             selectedTab={selectedTab}
+            onBookmarkAdded={handleBookmarkAdded}
+            isHighlighted={isHighlighted}
           />
         </React.Fragment>
       );

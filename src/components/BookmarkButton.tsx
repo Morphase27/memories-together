@@ -12,9 +12,10 @@ interface BookmarkButtonProps {
     isSent: boolean;
   };
   selectedTab: string;
+  onBookmarkAdded: () => void;
 }
 
-const BookmarkButton = ({ message, selectedTab }: BookmarkButtonProps) => {
+const BookmarkButton = ({ message, selectedTab, onBookmarkAdded }: BookmarkButtonProps) => {
   const handleBookmark = async () => {
     try {
       const { data, error } = await supabase
@@ -23,13 +24,14 @@ const BookmarkButton = ({ message, selectedTab }: BookmarkButtonProps) => {
           {
             content: message.content,
             sent_at: `${message.date} ${message.timestamp}`,
-            user: selectedTab, // Use the selected tab as the user
-            sender_name: message.isSent ? 'Small Trolley' : 'Big Trolley' // Reverse the logic as per requirement
+            user: selectedTab,
+            sender_name: message.isSent ? 'Small Trolley' : 'Big Trolley'
           }
         ]);
 
       if (error) throw error;
       toast.success('Message bookmarked successfully!');
+      onBookmarkAdded(); // Refresh the bookmarks list
     } catch (error) {
       console.error('Error bookmarking message:', error);
       toast.error('Failed to bookmark message');

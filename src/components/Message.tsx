@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { cn } from "@/lib/utils";
 import BookmarkButton from './BookmarkButton';
 
@@ -9,9 +9,31 @@ interface MessageProps {
   isSent: boolean;
   date: string;
   selectedTab: string;
+  onBookmarkAdded: () => void;
+  isHighlighted?: boolean;
 }
 
-const Message: React.FC<MessageProps> = ({ text, timestamp, isSent, date, selectedTab }) => {
+const Message: React.FC<MessageProps> = ({ 
+  text, 
+  timestamp, 
+  isSent, 
+  date, 
+  selectedTab,
+  onBookmarkAdded,
+  isHighlighted = false 
+}) => {
+  const [highlight, setHighlight] = useState(isHighlighted);
+
+  useEffect(() => {
+    if (isHighlighted) {
+      setHighlight(true);
+      const timer = setTimeout(() => {
+        setHighlight(false);
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [isHighlighted]);
+
   return (
     <div
       className={cn(
@@ -21,8 +43,9 @@ const Message: React.FC<MessageProps> = ({ text, timestamp, isSent, date, select
     >
       <div
         className={cn(
-          "max-w-[70%] p-2 rounded-lg shadow-sm relative",
-          isSent ? "bg-whatsapp-sent" : "bg-whatsapp-received"
+          "max-w-[70%] p-2 rounded-lg shadow-sm relative transition-all duration-300",
+          isSent ? "bg-whatsapp-sent" : "bg-whatsapp-received",
+          highlight && "ring-2 ring-blue-500 ring-offset-2"
         )}
       >
         <div className="flex justify-between items-start gap-2">
@@ -30,6 +53,7 @@ const Message: React.FC<MessageProps> = ({ text, timestamp, isSent, date, select
           <BookmarkButton 
             message={{ content: text, timestamp, date, isSent }} 
             selectedTab={selectedTab}
+            onBookmarkAdded={onBookmarkAdded}
           />
         </div>
         <span className="text-[11px] text-whatsapp-timestamp block text-right mt-1">
