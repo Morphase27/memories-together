@@ -1,18 +1,20 @@
 
 import React from 'react';
 import { cn } from "@/lib/utils";
+import BookmarkButton from './BookmarkButton';
 
 interface MessageProps {
   text: string;
   timestamp: string;
   isSent: boolean;
+  date: string;
 }
 
-const Message: React.FC<MessageProps> = ({ text, timestamp, isSent }) => {
+const Message: React.FC<MessageProps> = ({ text, timestamp, isSent, date }) => {
   return (
     <div
       className={cn(
-        "flex mb-2 animate-message-appear opacity-0",
+        "flex mb-2 animate-message-appear opacity-0 group",
         isSent ? "justify-end" : "justify-start"
       )}
     >
@@ -22,7 +24,10 @@ const Message: React.FC<MessageProps> = ({ text, timestamp, isSent }) => {
           isSent ? "bg-whatsapp-sent" : "bg-whatsapp-received"
         )}
       >
-        <p className="text-whatsapp-text text-sm break-words">{text}</p>
+        <div className="flex justify-between items-start gap-2">
+          <p className="text-whatsapp-text text-sm break-words">{text}</p>
+          <BookmarkButton message={{ content: text, timestamp, date, isSent }} />
+        </div>
         <span className="text-[11px] text-whatsapp-timestamp block text-right mt-1">
           {timestamp}
         </span>

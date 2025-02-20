@@ -14,6 +14,7 @@ export type Database = {
           content: string | null
           created_at: string
           id: number
+          sender_name: string
           sent_at: string | null
           sent_by: string | null
           user: string
@@ -22,6 +23,7 @@ export type Database = {
           content?: string | null
           created_at?: string
           id?: number
+          sender_name?: string
           sent_at?: string | null
           sent_by?: string | null
           user?: string
@@ -30,6 +32,7 @@ export type Database = {
           content?: string | null
           created_at?: string
           id?: number
+          sender_name?: string
           sent_at?: string | null
           sent_by?: string | null
           user?: string

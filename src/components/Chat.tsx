@@ -1,11 +1,11 @@
-
 import React, { useEffect, useRef, useState } from 'react';
 import Message from './Message';
 import ChatHeader from './ChatHeader';
 import DateSelector from './DateSelector';
+import BookmarkSelector from './BookmarkSelector';
 import { WhatsAppMessage } from './data/messages';
 
-const MESSAGES_PER_PAGE = 20; // Number of messages to load at once
+const MESSAGES_PER_PAGE = 20;
 
 const Chat = () => {
   console.log("Chat component rendered");
@@ -16,14 +16,12 @@ const Chat = () => {
   const [page, setPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Load initial messages
   useEffect(() => {
     import('./data/conversation.json')
       .then(data => {
         const conversation = data.default || data;
         const messages = conversation.messages;
         setAllMessages(messages);
-        // Load initial batch of most recent messages from the end
         const startIndex = Math.max(0, messages.length - MESSAGES_PER_PAGE);
         setMessages(messages.slice(startIndex));
       })
@@ -37,7 +35,6 @@ const Chat = () => {
     const targetIndex = allMessages.findIndex(message => message.date.includes(targetDate));
     
     if (targetIndex !== -1) {
-      // Load messages around the target date
       const startIndex = Math.max(0, targetIndex - Math.floor(MESSAGES_PER_PAGE / 2));
       const endIndex = Math.min(allMessages.length, startIndex + MESSAGES_PER_PAGE);
       setMessages(allMessages.slice(startIndex, endIndex));
@@ -45,18 +42,38 @@ const Chat = () => {
     }
   };
 
-  // Handle scroll event
+  const jumpToTimestamp = (timestamp: string) => {
+    const targetDate = new Date(timestamp);
+    const targetIndex = allMessages.findIndex(message => {
+      const messageDateTime = new Date(`${message.date} ${message.timestamp}`);
+      return messageDateTime.getTime() === targetDate.getTime();
+    });
+    
+    if (targetIndex !== -1) {
+      const startIndex = Math.max(0, targetIndex - Math.floor(MESSAGES_PER_PAGE / 2));
+      const endIndex = Math.min(allMessages.length, startIndex + MESSAGES_PER_PAGE);
+      setMessages(allMessages.slice(startIndex, endIndex));
+      setPage(Math.ceil(endIndex / MESSAGES_PER_PAGE));
+      
+      setTimeout(() => {
+        const messageElements = document.querySelectorAll('.animate-message-appear');
+        const targetElement = messageElements[targetIndex - startIndex];
+        if (targetElement) {
+          targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 100);
+    }
+  };
+
   const handleScroll = () => {
     if (!scrollContainerRef.current || isLoading) return;
 
     const { scrollTop, scrollHeight, clientHeight } = scrollContainerRef.current;
     
-    // Load more when user scrolls near the top
     if (scrollTop < 100) {
       loadMoreOlderMessages();
     }
     
-    // Load more when user scrolls near the bottom
     if (scrollHeight - (scrollTop + clientHeight) < 100) {
       loadMoreNewerMessages();
     }
@@ -92,7 +109,6 @@ const Chat = () => {
     }, 500);
   };
 
-  // Scroll to bottom on initial load
   useEffect(() => {
     if (messages.length === MESSAGES_PER_PAGE) {
       scrollToBottom();
@@ -109,7 +125,6 @@ const Chat = () => {
       const messageDate = message.date;
       let dateHeader = null;
 
-      // Show date header if it's a new date
       if (messageDate !== currentDate) {
         currentDate = messageDate;
         dateHeader = (
@@ -128,6 +143,7 @@ const Chat = () => {
             key={index}
             text={message.content}
             timestamp={message.timestamp}
+            date={message.date}
             isSent={message.isSent}
           />
         </React.Fragment>
@@ -153,8 +169,9 @@ const Chat = () => {
           <div ref={messagesEndRef} />
         </div>
       </div>
-      <div className="w-64 p-4 border-l border-gray-200">
+      <div className="w-64 p-4 border-l border-gray-200 space-y-4">
         <DateSelector onDateSelect={jumpToDate} />
+        <BookmarkSelector onBookmarkSelect={jumpToTimestamp} />
       </div>
     </div>
   );
