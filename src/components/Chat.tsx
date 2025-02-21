@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef, useState } from 'react';
 import Message from './Message';
 import ChatHeader from './ChatHeader';
@@ -48,33 +47,34 @@ const Chat = () => {
     }
   };
 
-  const parseMessageDateTime = (date: string, time: string) => {
-    // Convert date from DD/MM/YYYY to YYYY-MM-DD
-    const [day, month, year] = date.split('/');
-    const formattedDate = `${year}-${month}-${day}`;
-    return new Date(`${formattedDate}T${time}`);
+  const parseDateTime = (dateStr: string, timeStr: string) => {
+    const [day, month, year] = dateStr.split('/').map(num => num.trim());
+    const formattedTime = timeStr.includes(':') ? timeStr : `${timeStr}:00`;
+    const dateTimeStr = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}T${formattedTime}`;
+    return new Date(dateTimeStr);
   };
 
   const jumpToTimestamp = (timestamp: string) => {
-    const targetDate = new Date(timestamp);
+    const [dateStr, timeStr] = timestamp.split(',').map(str => str.trim());
+    const targetDate = parseDateTime(dateStr, timeStr);
+    
     console.log('Target timestamp:', targetDate);
-    
+
     const targetIndex = allMessages.findIndex(message => {
-      const messageDateTime = parseMessageDateTime(message.date, message.timestamp);
-      console.log('Comparing with:', messageDateTime, 'Content:', message.content);
-      
-      // Compare only hours and minutes since that's all we have in the message timestamps
-      const sameHour = messageDateTime.getHours() === targetDate.getHours();
-      const sameMinute = messageDateTime.getMinutes() === targetDate.getMinutes();
-      const sameDay = messageDateTime.getDate() === targetDate.getDate();
-      const sameMonth = messageDateTime.getMonth() === targetDate.getMonth();
-      const sameYear = messageDateTime.getFullYear() === targetDate.getFullYear();
-      
-      return sameHour && sameMinute && sameDay && sameMonth && sameYear;
+      try {
+        const messageDate = parseDateTime(message.date, message.timestamp);
+        console.log('Comparing with:', messageDate, 'Content:', message.content);
+
+        const timeDiff = Math.abs(messageDate.getTime() - targetDate.getTime());
+        return timeDiff < 1000;
+      } catch (error) {
+        console.error('Error parsing date:', error);
+        return false;
+      }
     });
-    
+
     console.log('Found message index:', targetIndex);
-    
+
     if (targetIndex !== -1) {
       const startIndex = Math.max(0, targetIndex - Math.floor(MESSAGES_PER_PAGE / 2));
       const endIndex = Math.min(allMessages.length, startIndex + MESSAGES_PER_PAGE);
@@ -82,7 +82,7 @@ const Chat = () => {
       setPage(Math.ceil(endIndex / MESSAGES_PER_PAGE));
       setHighlightedMessageTime(`${allMessages[targetIndex].date} ${allMessages[targetIndex].timestamp}`);
       setIsSheetOpen(false);
-      
+
       setTimeout(() => {
         const messageElements = document.querySelectorAll('.animate-message-appear');
         const targetElement = messageElements[targetIndex - startIndex];
@@ -148,7 +148,6 @@ const Chat = () => {
   };
 
   const handleBookmarkAdded = () => {
-    // We don't need this anymore since we're using real-time subscriptions
   };
 
   const renderMessages = () => {
