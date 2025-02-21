@@ -31,6 +31,8 @@ const Message: React.FC<MessageProps> = ({
         setHighlight(false);
       }, 2000);
       return () => clearTimeout(timer);
+    } else {
+      setHighlight(false);
     }
   }, [isHighlighted]);
 
