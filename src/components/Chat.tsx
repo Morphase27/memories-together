@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef, useState } from 'react';
 import Message from './Message';
 import ChatHeader from './ChatHeader';
@@ -175,7 +174,7 @@ const Chat = () => {
   };
 
   return (
-    <div className="h-screen flex flex-col bg-whatsapp-background">
+    <div className="h-screen flex flex-col bg-whatsapp-background relative">
       <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
         <ChatHeader>
           <SheetTrigger asChild>
@@ -212,4 +211,3 @@ const Chat = () => {
 };
 
 export default Chat;
-
