@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef, useState } from 'react';
 import Message from './Message';
 import ChatHeader from './ChatHeader';
@@ -10,7 +11,6 @@ import { SlidersHorizontal } from 'lucide-react';
 const MESSAGES_PER_PAGE = 20;
 
 const Chat = () => {
-  console.log("Chat component rendered");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [messages, setMessages] = useState<WhatsAppMessage[]>([]);
@@ -50,10 +50,16 @@ const Chat = () => {
 
   const jumpToTimestamp = (timestamp: string) => {
     const targetDate = new Date(timestamp);
+    console.log('Target timestamp:', targetDate.toISOString());
+    
     const targetIndex = allMessages.findIndex(message => {
-      const messageDateTime = new Date(`${message.date} ${message.timestamp}`);
-      return messageDateTime.getTime() === targetDate.getTime();
+      const [day, month, year] = message.date.split('/');
+      const messageDateTime = new Date(`${year}-${month}-${day}T${message.timestamp}`);
+      console.log('Message timestamp:', messageDateTime.toISOString(), 'Content:', message.content);
+      return Math.abs(messageDateTime.getTime() - targetDate.getTime()) < 1000; // Allow 1 second difference
     });
+    
+    console.log('Found message index:', targetIndex);
     
     if (targetIndex !== -1) {
       const startIndex = Math.max(0, targetIndex - Math.floor(MESSAGES_PER_PAGE / 2));
@@ -160,7 +166,7 @@ const Chat = () => {
             date={message.date}
             isSent={message.isSent}
             selectedTab={selectedTab}
-            onBookmarkAdded={handleBookmarkAdded}
+            onBookmarkAdded={() => {}}
             isHighlighted={isHighlighted}
           />
         </React.Fragment>
@@ -206,3 +212,4 @@ const Chat = () => {
 };
 
 export default Chat;
+
