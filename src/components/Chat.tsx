@@ -4,6 +4,8 @@ import ChatHeader from './ChatHeader';
 import DateSelector from './DateSelector';
 import BookmarkSelector from './BookmarkSelector';
 import { WhatsAppMessage } from './data/messages';
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { SlidersHorizontal } from 'lucide-react';
 
 const MESSAGES_PER_PAGE = 20;
 
@@ -17,6 +19,7 @@ const Chat = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedTab, setSelectedTab] = useState('Big Trolley');
   const [highlightedMessageTime, setHighlightedMessageTime] = useState<string | null>(null);
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
 
   useEffect(() => {
     import('./data/conversation.json')
@@ -41,6 +44,7 @@ const Chat = () => {
       const endIndex = Math.min(allMessages.length, startIndex + MESSAGES_PER_PAGE);
       setMessages(allMessages.slice(startIndex, endIndex));
       setPage(Math.ceil(endIndex / MESSAGES_PER_PAGE));
+      setIsSheetOpen(false);
     }
   };
 
@@ -57,6 +61,7 @@ const Chat = () => {
       setMessages(allMessages.slice(startIndex, endIndex));
       setPage(Math.ceil(endIndex / MESSAGES_PER_PAGE));
       setHighlightedMessageTime(`${allMessages[targetIndex].date} ${allMessages[targetIndex].timestamp}`);
+      setIsSheetOpen(false);
       
       setTimeout(() => {
         const messageElements = document.querySelectorAll('.animate-message-appear');
@@ -164,29 +169,37 @@ const Chat = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto h-screen flex bg-whatsapp-background">
-      <div className="flex-1 flex flex-col">
-        <ChatHeader />
-        <div 
-          ref={scrollContainerRef}
-          className="flex-1 overflow-y-auto p-4"
-          onScroll={handleScroll}
-        >
-          {isLoading && (
-            <div className="text-center py-2 text-gray-500">
-              Loading more messages...
-            </div>
-          )}
-          {renderMessages()}
-          <div ref={messagesEndRef} />
-        </div>
-      </div>
-      <div className="w-64 p-4 border-l border-gray-200 space-y-4">
-        <DateSelector onDateSelect={jumpToDate} />
-        <BookmarkSelector 
-          onBookmarkSelect={jumpToTimestamp}
-          onTabChange={setSelectedTab}
-        />
+    <div className="h-screen flex flex-col bg-whatsapp-background">
+      <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+        <ChatHeader>
+          <SheetTrigger asChild>
+            <button className="p-2 hover:bg-gray-100 rounded-full">
+              <SlidersHorizontal className="h-5 w-5 text-gray-600" />
+            </button>
+          </SheetTrigger>
+        </ChatHeader>
+        <SheetContent side="right" className="w-[300px] sm:w-[400px] p-0">
+          <div className="p-4 space-y-4">
+            <DateSelector onDateSelect={jumpToDate} />
+            <BookmarkSelector 
+              onBookmarkSelect={jumpToTimestamp}
+              onTabChange={setSelectedTab}
+            />
+          </div>
+        </SheetContent>
+      </Sheet>
+      <div 
+        ref={scrollContainerRef}
+        className="flex-1 overflow-y-auto p-4"
+        onScroll={handleScroll}
+      >
+        {isLoading && (
+          <div className="text-center py-2 text-gray-500">
+            Loading more messages...
+          </div>
+        )}
+        {renderMessages()}
+        <div ref={messagesEndRef} />
       </div>
     </div>
   );

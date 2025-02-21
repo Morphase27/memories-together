@@ -99,7 +99,8 @@ const BookmarkSelector = ({ onBookmarkSelect, onTabChange }: BookmarkSelectorPro
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-lg p-4">
+    <div className="bg-white rounded-lg p-4">
+      <h2 className="text-lg font-semibold mb-4">Bookmarks</h2>
       <Tabs defaultValue="Big Trolley" onValueChange={onTabChange}>
         <TabsList className="w-full mb-4">
           <TabsTrigger value="Big Trolley" className="flex-1">Big Trolley</TabsTrigger>
@@ -108,7 +109,7 @@ const BookmarkSelector = ({ onBookmarkSelect, onTabChange }: BookmarkSelectorPro
 
         {['Big Trolley', 'Small Trolley'].map((user) => (
           <TabsContent key={user} value={user}>
-            <ScrollArea className="h-[400px]">
+            <ScrollArea className="h-[calc(100vh-400px)]">
               <div className="space-y-4">
                 {bookmarks[user]?.map((bookmark) => (
                   <div
@@ -144,3 +145,4 @@ const BookmarkSelector = ({ onBookmarkSelect, onTabChange }: BookmarkSelectorPro
 };
 
 export default BookmarkSelector;
+
