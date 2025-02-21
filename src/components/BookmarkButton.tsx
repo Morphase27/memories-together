@@ -16,14 +16,23 @@ interface BookmarkButtonProps {
 }
 
 const BookmarkButton = ({ message, selectedTab, onBookmarkAdded }: BookmarkButtonProps) => {
+  const formatDateTime = (date: string, time: string) => {
+    // Convert DD/MM/YYYY to YYYY-MM-DD
+    const [day, month, year] = date.split('/');
+    const formattedDate = `${year}-${month}-${day}`;
+    return `${formattedDate} ${time}`;
+  };
+
   const handleBookmark = async () => {
     try {
+      const formattedDateTime = formatDateTime(message.date, message.timestamp);
+      
       const { data, error } = await supabase
         .from('Bookmarks')
         .insert([
           {
             content: message.content,
-            sent_at: `${message.date} ${message.timestamp}`,
+            sent_at: formattedDateTime,
             user: selectedTab,
             sender_name: message.isSent ? 'Small Trolley' : 'Big Trolley'
           }
@@ -50,3 +59,4 @@ const BookmarkButton = ({ message, selectedTab, onBookmarkAdded }: BookmarkButto
 };
 
 export default BookmarkButton;
+
