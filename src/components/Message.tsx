@@ -22,7 +22,7 @@ const Message: React.FC<MessageProps> = ({
   onBookmarkAdded,
   isHighlighted = false 
 }) => {
-  const [highlight, setHighlight] = useState(isHighlighted);
+  const [highlight, setHighlight] = useState(false);
 
   useEffect(() => {
     if (isHighlighted) {
