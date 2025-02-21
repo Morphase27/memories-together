@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef, useState } from 'react';
 import Message from './Message';
 import ChatHeader from './ChatHeader';
@@ -47,15 +48,29 @@ const Chat = () => {
     }
   };
 
+  const parseMessageDateTime = (date: string, time: string) => {
+    // Convert date from DD/MM/YYYY to YYYY-MM-DD
+    const [day, month, year] = date.split('/');
+    const formattedDate = `${year}-${month}-${day}`;
+    return new Date(`${formattedDate}T${time}`);
+  };
+
   const jumpToTimestamp = (timestamp: string) => {
     const targetDate = new Date(timestamp);
-    console.log('Target timestamp:', targetDate.toISOString());
+    console.log('Target timestamp:', targetDate);
     
     const targetIndex = allMessages.findIndex(message => {
-      const [day, month, year] = message.date.split('/');
-      const messageDateTime = new Date(`${year}-${month}-${day}T${message.timestamp}`);
-      console.log('Message timestamp:', messageDateTime.toISOString(), 'Content:', message.content);
-      return Math.abs(messageDateTime.getTime() - targetDate.getTime()) < 1000; // Allow 1 second difference
+      const messageDateTime = parseMessageDateTime(message.date, message.timestamp);
+      console.log('Comparing with:', messageDateTime, 'Content:', message.content);
+      
+      // Compare only hours and minutes since that's all we have in the message timestamps
+      const sameHour = messageDateTime.getHours() === targetDate.getHours();
+      const sameMinute = messageDateTime.getMinutes() === targetDate.getMinutes();
+      const sameDay = messageDateTime.getDate() === targetDate.getDate();
+      const sameMonth = messageDateTime.getMonth() === targetDate.getMonth();
+      const sameYear = messageDateTime.getFullYear() === targetDate.getFullYear();
+      
+      return sameHour && sameMinute && sameDay && sameMonth && sameYear;
     });
     
     console.log('Found message index:', targetIndex);
