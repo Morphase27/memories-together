@@ -19,9 +19,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <div className="mx-auto w-full md:w-[70%]">
-        <Chat />
-      </div>
+      <Chat />
     </div>
   );
 };
