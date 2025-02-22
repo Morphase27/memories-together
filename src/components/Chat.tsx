@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef, useState } from 'react';
 import Message from './Message';
 import ChatHeader from './ChatHeader';
@@ -55,20 +56,26 @@ const Chat = () => {
   };
 
   const jumpToTimestamp = (timestamp: string) => {
-    const [dateStr, timeStr] = timestamp.split(',').map(str => str.trim());
-    const targetDate = parseDateTime(dateStr, timeStr);
-    
-    console.log('Target timestamp:', targetDate);
+    // Parse the timestamp from the bookmark format "DD/MM/YYYY, HH:mm"
+    const [date, time] = timestamp.split(',').map(str => str.trim());
+    const targetTime = parseDateTime(date, time);
+
+    console.log('Target timestamp:', targetTime.toISOString());
 
     const targetIndex = allMessages.findIndex(message => {
       try {
-        const messageDate = parseDateTime(message.date, message.timestamp);
-        console.log('Comparing with:', messageDate, 'Content:', message.content);
-
-        const timeDiff = Math.abs(messageDate.getTime() - targetDate.getTime());
+        const messageTime = parseDateTime(message.date, message.timestamp);
+        const timeDiff = Math.abs(messageTime.getTime() - targetTime.getTime());
+        
+        // Log comparison details for debugging
+        console.log('Message time:', messageTime.toISOString());
+        console.log('Time difference:', timeDiff);
+        console.log('Message content:', message.content);
+        
+        // Consider messages within 1 second to be the same
         return timeDiff < 1000;
       } catch (error) {
-        console.error('Error parsing date:', error);
+        console.error('Error comparing dates:', error);
         return false;
       }
     });
@@ -83,6 +90,7 @@ const Chat = () => {
       setHighlightedMessageTime(`${allMessages[targetIndex].date} ${allMessages[targetIndex].timestamp}`);
       setIsSheetOpen(false);
 
+      // Scroll to the highlighted message after a short delay to ensure the DOM has updated
       setTimeout(() => {
         const messageElements = document.querySelectorAll('.animate-message-appear');
         const targetElement = messageElements[targetIndex - startIndex];
@@ -152,6 +160,7 @@ const Chat = () => {
 
   const renderMessages = () => {
     let currentDate = '';
+    
     return messages.map((message, index) => {
       const messageDate = message.date;
       let dateHeader = null;
@@ -169,17 +178,17 @@ const Chat = () => {
 
       const isHighlighted = highlightedMessageTime === `${message.date} ${message.timestamp}`;
 
+      const key = `message-group-${index}`;
       return (
-        <React.Fragment key={`message-group-${index}`}>
+        <React.Fragment key={key}>
           {dateHeader}
           <Message
-            key={index}
             text={message.content}
             timestamp={message.timestamp}
             date={message.date}
             isSent={message.isSent}
             selectedTab={selectedTab}
-            onBookmarkAdded={() => {}}
+            onBookmarkAdded={handleBookmarkAdded}
             isHighlighted={isHighlighted}
           />
         </React.Fragment>
