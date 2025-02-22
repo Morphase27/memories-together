@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef, useState } from 'react';
 import Message from './Message';
 import ChatHeader from './ChatHeader';
@@ -48,40 +47,19 @@ const Chat = () => {
     }
   };
 
-  const parseDateTime = (dateStr: string, timeStr: string) => {
-    const [day, month, year] = dateStr.split('/').map(num => num.trim());
-    const formattedTime = timeStr.includes(':') ? timeStr : `${timeStr}:00`;
-    const dateTimeStr = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}T${formattedTime}`;
-    return new Date(dateTimeStr);
-  };
-
   const jumpToTimestamp = (timestamp: string) => {
-    // Parse the timestamp from the bookmark format "DD/MM/YYYY, HH:mm"
-    const [date, time] = timestamp.split(',').map(str => str.trim());
-    const targetTime = parseDateTime(date, time);
-
-    console.log('Target timestamp:', targetTime.toISOString());
-
+    const targetDate = new Date(timestamp);
+    console.log('Target timestamp:', targetDate.toISOString());
+    
     const targetIndex = allMessages.findIndex(message => {
-      try {
-        const messageTime = parseDateTime(message.date, message.timestamp);
-        const timeDiff = Math.abs(messageTime.getTime() - targetTime.getTime());
-        
-        // Log comparison details for debugging
-        console.log('Message time:', messageTime.toISOString());
-        console.log('Time difference:', timeDiff);
-        console.log('Message content:', message.content);
-        
-        // Consider messages within 1 second to be the same
-        return timeDiff < 1000;
-      } catch (error) {
-        console.error('Error comparing dates:', error);
-        return false;
-      }
+      const [day, month, year] = message.date.split('/');
+      const messageDateTime = new Date(`${year}-${month}-${day}T${message.timestamp}`);
+      console.log('Message timestamp:', messageDateTime.toISOString(), 'Content:', message.content);
+      return Math.abs(messageDateTime.getTime() - targetDate.getTime()) < 1000; // Allow 1 second difference
     });
-
+    
     console.log('Found message index:', targetIndex);
-
+    
     if (targetIndex !== -1) {
       const startIndex = Math.max(0, targetIndex - Math.floor(MESSAGES_PER_PAGE / 2));
       const endIndex = Math.min(allMessages.length, startIndex + MESSAGES_PER_PAGE);
@@ -89,8 +67,7 @@ const Chat = () => {
       setPage(Math.ceil(endIndex / MESSAGES_PER_PAGE));
       setHighlightedMessageTime(`${allMessages[targetIndex].date} ${allMessages[targetIndex].timestamp}`);
       setIsSheetOpen(false);
-
-      // Scroll to the highlighted message after a short delay to ensure the DOM has updated
+      
       setTimeout(() => {
         const messageElements = document.querySelectorAll('.animate-message-appear');
         const targetElement = messageElements[targetIndex - startIndex];
@@ -156,11 +133,11 @@ const Chat = () => {
   };
 
   const handleBookmarkAdded = () => {
+    // We don't need this anymore since we're using real-time subscriptions
   };
 
   const renderMessages = () => {
     let currentDate = '';
-    
     return messages.map((message, index) => {
       const messageDate = message.date;
       let dateHeader = null;
@@ -178,17 +155,17 @@ const Chat = () => {
 
       const isHighlighted = highlightedMessageTime === `${message.date} ${message.timestamp}`;
 
-      const key = `message-group-${index}`;
       return (
-        <React.Fragment key={key}>
+        <React.Fragment key={`message-group-${index}`}>
           {dateHeader}
           <Message
+            key={index}
             text={message.content}
             timestamp={message.timestamp}
             date={message.date}
             isSent={message.isSent}
             selectedTab={selectedTab}
-            onBookmarkAdded={handleBookmarkAdded}
+            onBookmarkAdded={() => {}}
             isHighlighted={isHighlighted}
           />
         </React.Fragment>
